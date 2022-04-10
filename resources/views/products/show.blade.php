@@ -27,24 +27,31 @@
 
                     <p class="product-price">${{ number_format($product->price, 2) }}</p>
 
-                    <div class="d-flex flex-wrap gap-2 mt-4">
-                        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">Back</a>
-                        <a href="{{ route('products.edit', $product->id) }}" class="btn btn-outline-warning">Edit</a>
+                   <div class="d-flex flex-wrap gap-2 mt-4">
+                        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">
+                            Back
+                        </a>
 
                         @auth
-                            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn btn-success">
-                                    Add to Cart
-                                </button>
-                            </form>
-                            @endauth
+                            @if(auth()->user()->isAdmin())
+                                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">
+                                    Edit
+                                </a>
+                            @else
+                                <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-success">
+                                        Add to Cart
+                                    </button>
+                                </form>
+                            @endif
+                        @endauth
 
-                            @guest
+                        @guest
                             <a href="{{ route('login') }}" class="btn btn-outline-primary">
                                 Login to buy
                             </a>
-                            @endguest
+                        @endguest
                     </div>
                 </div>
             </div>

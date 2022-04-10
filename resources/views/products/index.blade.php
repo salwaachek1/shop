@@ -12,9 +12,13 @@
                 <p class="section-subtitle mb-0">Browse and manage the available store inventory.</p>
             </div>
 
-            <a href="{{ route('products.create') }}" class="btn btn-primary">
-                Add Product
-            </a>
+            @auth
+                @if(auth()->user()->isAdmin())
+                    <a href="{{ route('products.create') }}" class="btn btn-primary">
+                        Add Product
+                    </a>
+                @endif
+            @endauth
         </div>
 
         <div class="row g-4">
@@ -45,23 +49,27 @@
                                     View
                                 </a>
 
-                                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-outline-warning btn-sm">
-                                    Edit
-                                </a>
-
-                                <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">
-                                        Delete
-                                    </button>
-                                </form>
-
                                 @auth
-                                    <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-success btn-sm"> Add to Cart </button>
-                                    </form>
+                                    @if(auth()->user()->isAdmin())
+                                        <a href="{{ route('products.edit', $product->id) }}" class="btn btn-outline-warning btn-sm">
+                                            Edit
+                                        </a>
+
+                                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success btn-sm">
+                                                Add to Cart
+                                            </button>
+                                        </form>
+                                    @endif
                                 @endauth
 
                                 @guest

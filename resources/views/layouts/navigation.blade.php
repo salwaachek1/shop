@@ -16,10 +16,12 @@
                 </a>
 
                 @auth
-                    <a href="{{ route('cart.index') }}"
-                       class="nav-link {{ request()->routeIs('cart.*') ? 'active' : '' }}">
-                        Cart
-                    </a>
+                    @if(!auth()->user()->isAdmin())
+                        <a href="{{ route('cart.index') }}"
+                           class="nav-link {{ request()->routeIs('cart.*') ? 'active' : '' }}">
+                            Cart
+                        </a>
+                    @endif
                 @endauth
             </div>
 
@@ -28,6 +30,10 @@
                     <span class="navbar-text text-white-50 me-2">
                         {{ Auth::user()->name }}
                     </span>
+
+                    @if(auth()->user()->isAdmin())
+                        <span class="badge bg-warning text-dark">Admin</span>
+                    @endif
 
                     <form method="POST" action="{{ route('logout') }}" class="m-0">
                         @csrf
