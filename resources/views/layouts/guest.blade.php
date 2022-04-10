@@ -11,21 +11,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 </head>
-<body class="app-shell">
-    <div class="min-vh-100 bg-light">
-        @include('layouts.navigation')
+<body class="auth-page">
+    <div class="min-vh-100 d-flex align-items-center justify-content-center auth-wrapper">
+        <div class="auth-card">
+            <div class="text-center mb-4">
+                <a href="{{ route('products.index') }}" class="auth-brand text-decoration-none">
+                    Mini Shop
+                </a>
+                <p class="text-muted mb-0 mt-2">Sign in to manage products and your cart.</p>
+            </div>
 
-        @isset($header)
-            <header class="page-header border-bottom bg-white">
-                <div class="container py-4">
-                    {{ $header }}
-                </div>
-            </header>
-        @endisset
-
-        <main class="py-4">
             {{ $slot }}
-        </main>
+        </div>
     </div>
 
     <script src="{{ asset('js/app.js') }}" defer></script>

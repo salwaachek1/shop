@@ -1,77 +1,53 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Product Details
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="row justify-content-center">
-    <div class="col-lg-8">
+    <div class="container py-4">
         <div class="content-card">
-            <div class="section-header">
-                <h2 class="section-title">Edit Product</h2>
-                <p class="section-subtitle">Update the selected product information.</p>
+            <div class="row g-4 align-items-start">
+                <div class="col-md-5">
+                    @if($product->image)
+                        <img src="{{ $product->image }}" alt="{{ $product->name }}" class="img-fluid rounded">
+                    @else
+                        <div class="product-image-placeholder rounded">
+                            No Image Available
+                        </div>
+                    @endif
+                </div>
+
+                <div class="col-md-7">
+                    <h2 class="section-title">{{ $product->name }}</h2>
+
+                    <p class="text-muted">
+                        {{ $product->description ?: 'No description available for this product.' }}
+                    </p>
+
+                    <p class="product-price">${{ number_format($product->price, 2) }}</p>
+
+                    <div class="d-flex flex-wrap gap-2 mt-4">
+                        <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">Back</a>
+                        <a href="{{ route('products.edit', $product->id) }}" class="btn btn-outline-warning">Edit</a>
+
+                        @auth
+                            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-success">
+                                    Add to Cart
+                                </button>
+                            </form>
+                            @endauth
+
+                            @guest
+                            <a href="{{ route('login') }}" class="btn btn-outline-primary">
+                                Login to buy
+                            </a>
+                            @endguest
+                    </div>
+                </div>
             </div>
-
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0 ps-3">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <form action="{{ route('products.update', $product->id) }}" method="POST">
-                @csrf
-                @method('PUT')
-
-                <div class="mb-3">
-                    <label for="name" class="form-label">Product Name</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        class="form-control"
-                        value="{{ old('name', $product->name) }}"
-                    >
-                </div>
-
-                <div class="mb-3">
-                    <label for="price" class="form-label">Price</label>
-                    <input
-                        type="text"
-                        id="price"
-                        name="price"
-                        class="form-control"
-                        value="{{ old('price', $product->price) }}"
-                    >
-                </div>
-
-                <div class="mb-3">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea
-                        id="description"
-                        name="description"
-                        class="form-control"
-                        rows="4"
-                    >{{ old('description', $product->description) }}</textarea>
-                </div>
-
-                <div class="mb-4">
-                    <label for="image" class="form-label">Image URL</label>
-                    <input
-                        type="text"
-                        id="image"
-                        name="image"
-                        class="form-control"
-                        value="{{ old('image', $product->image) }}"
-                    >
-                </div>
-
-                <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-warning">Update Product</button>
-                    <a href="{{ route('products.index') }}" class="btn btn-outline-secondary">Cancel</a>
-                </div>
-            </form>
         </div>
     </div>
-</div>
-@endsection
+</x-app-layout>

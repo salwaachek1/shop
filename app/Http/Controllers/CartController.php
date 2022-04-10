@@ -4,13 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
-use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-   public function index()
+    public function index()
     {
-        $cartItems = Cart::with('product')->get();
+        $cartItems = Cart::with('product')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
         return view('cart.index', compact('cartItems'));
     }
 
@@ -18,26 +21,33 @@ class CartController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $cartItem = Cart::where('product_id', $id)->first();
+        $cartItem = Cart::where('user_id', auth()->id())
+            ->where('product_id', $product->id)
+            ->first();
 
         if ($cartItem) {
             $cartItem->increment('quantity');
         } else {
             Cart::create([
-            'user_id' => auth()->id(),
-            'product_id' => $product->id,
-            'quantity' => 1,
-        ]);
+                'user_id' => auth()->id(),
+                'product_id' => $product->id,
+                'quantity' => 1,
+            ]);
         }
 
-        return redirect()->back()->with('success', 'Product added to cart.');
+        return redirect()->back()
+            ->with('success', 'Product added to cart successfully.');
     }
 
     public function remove($id)
     {
-        $cartItem = Cart::findOrFail($id);
+        $cartItem = Cart::where('user_id', auth()->id())
+            ->where('id', $id)
+            ->firstOrFail();
+
         $cartItem->delete();
 
-        return redirect()->back()->with('success', 'Product removed from cart.');
+        return redirect()->back()
+            ->with('success', 'Item removed from cart.');
     }
 }
